@@ -343,8 +343,8 @@ module Aws
             @params[:connection_mode] ||= :default
             @params[:connection_mode] = :per_request if @params[:connection_mode] == :default
             @logger = @params[:logger]
-            @logger = RAILS_DEFAULT_LOGGER if !@logger && defined?(RAILS_DEFAULT_LOGGER)
-            @logger = Logger.new(STDOUT) if !@logger
+            @logger ||= Rails.logger if defined? Rails
+            @logger ||= Logger.new(STDOUT)
             @logger.info "New #{self.class.name} using #{@params[:connection_mode].to_s}-connection mode"
             @error_handler = nil
             @cache = {}

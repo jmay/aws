@@ -722,6 +722,23 @@ module Aws
             @last_response && @last_response.body.to_s[%r{<requestId>(.+?)</requestId>}] && $1
         end
 
+        def amazonize_list(masks, list) #:nodoc:
+          groups = {}
+          Array(list).each_with_index do |list_item, i|
+            Array(masks).each_with_index do |mask, mask_idx|
+              key = mask[/\?/] ? mask.dup : mask.dup + '.?'
+              key.sub!('?', (i+1).to_s)
+              value = Array(list_item)[mask_idx]
+              if value.is_a?(Array)
+                groups.merge!(amazonize_list(key, value))
+              else
+                groups[key] = value
+              end
+            end
+          end
+          groups
+        end
+
         def hash_params(prefix, list) #:nodoc:
             groups = {}
             list.each_index{|i| groups.update("#{prefix}.#{i+1}"=>list[i])} if list

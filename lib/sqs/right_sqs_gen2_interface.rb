@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-module RightAws
+module Aws
 
   #
   # Right::Aws::SqsGen2Interface - RightScale's low-level Amazon SQS interface
@@ -35,8 +35,8 @@ module RightAws
   # bare SQS API.  For a somewhat higher-level and object-oriented interface, see
   # RightAws::SqsGen2. 
 
-  class SqsGen2Interface < RightAwsBase
-    include RightAwsBaseInterface
+  class SqsGen2Interface < AwsBase
+    include AwsBaseInterface
     
     API_VERSION       = "2009-02-01"
     DEFAULT_HOST      = "queue.amazonaws.com"
@@ -140,7 +140,7 @@ module RightAws
       # Sends request to Amazon and parses the response
       # Raises AwsError if any banana happened
     def request_info(request, parser) # :nodoc:
-      request_info_impl(:sqs_connection, @@bench, request, parser)
+      request_info_impl(Rightscale::HttpConnection.new(:exception => AwsError, :logger => @logger), @@bench, request, parser)
     end
 
       # Creates a new queue, returning its URI.
@@ -438,7 +438,7 @@ module RightAws
     #      PARSERS: Status Response Parser
     #-----------------------------------------------------------------
 
-    class SqsStatusParser < RightAWSParser # :nodoc:
+    class SqsStatusParser < AwsParser # :nodoc:
       def tagend(name)
         if name == 'ResponseMetadata'
           @result = true
@@ -450,13 +450,13 @@ module RightAws
     #      PARSERS: Queue
     #-----------------------------------------------------------------
 
-    class SqsCreateQueueParser < RightAWSParser # :nodoc:
+    class SqsCreateQueueParser < AwsParser # :nodoc:
       def tagend(name)
         @result = @text if name == 'QueueUrl'
       end
     end
 
-    class SqsListQueuesParser < RightAWSParser # :nodoc:
+    class SqsListQueuesParser < AwsParser # :nodoc:
       def reset
         @result = []
       end
@@ -465,7 +465,7 @@ module RightAws
       end
     end
 
-    class SqsGetQueueAttributesParser < RightAWSParser # :nodoc:
+    class SqsGetQueueAttributesParser < AwsParser # :nodoc:
       def reset
         @result = {}
       end
@@ -481,7 +481,7 @@ module RightAws
     #      PARSERS: Messages
     #-----------------------------------------------------------------
 
-    class SqsReceiveMessageParser < RightAWSParser # :nodoc:
+    class SqsReceiveMessageParser < AwsParser # :nodoc:
       def reset
         @result = []
       end
@@ -507,7 +507,7 @@ module RightAws
       end
     end
 
-    class SqsSendMessagesParser < RightAWSParser # :nodoc:
+    class SqsSendMessagesParser < AwsParser # :nodoc:
       def reset
         @result = {}
       end

@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-module RightAws
+module Aws
 
     #
     # RightAws::SqsGen2 -- RightScale's Amazon SQS interface, API version
